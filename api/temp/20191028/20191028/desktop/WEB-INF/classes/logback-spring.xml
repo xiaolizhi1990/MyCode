@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--<property name="LOG_HOME" value="/data/news/newsServer/logs"/>-->
+    <!--<property name="app_name" value="jixian_news_server"/>-->
+
+    <springProperty scope="context" name="log_path" source="logging.ecs.path" defaultValue="/data/ecs/demo-logs"/>
+    <springProperty scope="context" name="app_name" source="logging.ecs.appname" defaultValue="ecs-svc-demo"/>
+
+
+    <!-- 日志文件保留天数 -->
+    <springProperty scope="context" name="logger_max_history" source="logging.ecs.maxHistory" defaultValue="200"/>
+
+    <!-- 日志文件大小：默认50MB -->
+    <springProperty scope="context" name="max_file_size" source="logging.ecs.maxFileSize" defaultValue="50MB"/>
+
+    <contextName>${app_name}</contextName>
+
+    <!-- Log Appender Begin -->
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <springProfile name="prod">
+        <conversionRule conversionWord="hostname" converterClass="com.iflytek.edu.ecs.tools.logback.config.EcsHostNameConfig" />
+        <!--输出到文件-->
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${log_path}/${app_name}/${hostname}/${app_name}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <maxFileSize>${max_file_size}</maxFileSize>
+                <maxHistory>${logger_max_history}</maxHistory>
+                <totalSizeCap>100GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+
+    </springProfile>
+
+    <springProfile name="test">
+        <!--输出到文件-->
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${log_path}/${app_name}/${app_name}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <maxFileSize>${max_file_size}</maxFileSize>
+                <maxHistory>${logger_max_history}</maxHistory>
+                <totalSizeCap>100GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+
+	<appender name="flylog" class="com.iflytek.fsp.flylog.sdk.java.plugin.logback.FlylogAppender"></appender>
+    <logger name="org.apache.flume" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="flylog"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="test">
+        <root level="DEBUG">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="flylog"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <root level="DEBUG">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="flylog"/>
+        </root>
+    </springProfile>
+
+</configuration>

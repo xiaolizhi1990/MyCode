@@ -1,0 +1,53 @@
+spring:
+  profiles:
+    active: dev
+  aop:
+    proxy-target-class: true
+  redis:
+    cache:
+      nameSpace: desktop-backend
+    host: 10.4.88.1
+    port: 6380
+    password: lezhixing!@#$1qaz@WSX
+  #redis:
+  #  cache:
+  #    nameSpace: appstore-backend
+  #  host: 172.31.7.92
+  #  port: 6379
+   # password: dsfwf8923$(_@
+  mvc:
+    static-path-pattern: /backend/**
+  resources:
+    static-locations: classpath:/META-INF/resources
+    
+dubbo:
+  application:
+      name: desktop-backend-client
+      version: 1.0.1
+  protocol:
+     name: dubbo
+  registry:
+      address:  zookeeper://172.31.7.92:2281
+#zookeeper://10.4.88.1:2281       zookeeper://172.31.7.92:2281
+#version = 70
+
+#sso的地址
+sso:
+  server:
+    url: http://test.open.changyan.com/sso
+  #appkey
+  appkey: 8a1061d2a87344dd87e3b6e8ed10ac32
+  login:
+    url: http://www.tt.com
+
+web:
+  server:
+    url: http://www.tt.com
+
+brave:
+  application: ecs-web-desktop
+
+ecs:
+  svc:
+    consumerFilter: braveDubboClientFilter
+    applicationName: ecs-web-desktop

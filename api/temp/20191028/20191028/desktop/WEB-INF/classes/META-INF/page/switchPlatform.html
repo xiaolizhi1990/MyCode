@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>跳转平台</title>
+<script type="text/javascript">
+	function switch_platform(){
+		window.location.href='${targetUrl}'
+	}
+</script>
+<script type="text/javascript" src="${saasDomain}/desktop/backend/login/operInCloud?callback=switch_platform&ecsPtid=${ptid}&ecsDesktopServer=${localDomain}"></script>
+</head>
+<body>
+
+</body>
+</html>

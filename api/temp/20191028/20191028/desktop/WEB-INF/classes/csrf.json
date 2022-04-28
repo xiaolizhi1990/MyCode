@@ -1,0 +1,14 @@
+{
+    "ProtectedURLs": [
+    	"/backend/app-manage/app/add",
+    	"/backend/save/titleSetting",
+    	"/backend/save/folder",
+    	"/backend/remove/folder",
+    	"/backend/move/app-to-folder",
+    	"/backend/desktop/remove/desktop-app",
+    	"/backend/indexPage/v8/saveIconBgroundSetting",
+    	"/backend/desktop/save/sys-app-configs",
+    	"/backend/desktop/save/app-sort",
+    	"/backend/theme/updateCurrUserMainBground"
+    ]
+}

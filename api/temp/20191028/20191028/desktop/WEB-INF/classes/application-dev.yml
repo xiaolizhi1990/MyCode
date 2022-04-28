@@ -1,0 +1,6 @@
+logging:
+  ecs:
+    path: /data/ecs-dev/logs
+    appname: ecs-web-desktop
+    maxHistory: 1
+    maxFileSize: 50MB

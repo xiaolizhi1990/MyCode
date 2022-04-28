@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: desktop-backend
+Implementation-Version: 1.0.1001-SNAPSHOT
+Archiver-Version: Plexus Archiver
+Built-By: cis
+Implementation-Vendor-Id: com.iflytek.edu.ecs.web.desktop
+Created-By: Apache Maven 3.3.9
+Build-Jdk: 1.8.0_65
+Implementation-URL: http://www.example.com
+Implementation-Vendor: Pivotal Software, Inc.
+

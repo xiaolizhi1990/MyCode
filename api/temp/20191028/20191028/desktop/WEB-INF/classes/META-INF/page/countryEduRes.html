@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>实名认证页</title>
+<style type="text/css">
+	.privacy-bg-1 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999999;
+    background: rgba(0,0,0,.4);
+}
+.privacy-box-1 {
+    width: 365px;
+    height: 371px;
+    top: 50%;
+    left: 50%;
+    margin-top: -280px;
+    margin-left: -205px;
+    position: absolute;
+    background: #fff;
+    padding: 20px 20px;
+}
+.privacy-content-1 {
+    height: 340px;
+}
+.privacy-btn-1 {
+    text-align: center;
+    margin-top: 10px;
+    margin-left: 161px;
+}
+.privacy-btn-one {
+    display: inline-block;
+    background: #50a7fc;
+    height: 30px;
+    line-height: 30px;
+    width: 90px;
+    text-align: center;
+    color: #fff;
+    margin-right: 20px;
+    border-radius: 5px;
+}
+.privacy-btn-two {
+    display: inline-block;
+    background: #50a7fc;
+    height: 30px;
+    line-height: 30px;
+    width: 90px;
+    text-align: center;
+    color: #fff;
+    border-radius: 5px;
+}
+.privacy-content-header {
+    font-size: 14px;
+    height: 30px;
+    color: #333;
+    text-indent: 0;
+}
+.privacy-content-img {
+    height :67px;
+    width: 87px;
+    margin :30px auto;
+}
+.privacy-content-img img {
+    width: 100%;
+}
+.privacy-content-footer {
+    margin-top: 20px;
+}
+.privacy-content-footer li {
+    list-style-type: disc;
+    margin-left: 16px;
+}
+.privacy-close {
+    position: absolute;
+    right: 20px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    top: 19px;
+    background-size: 100% 100%;
+    background-position: 100% 100%;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAALeUlEQVR4Xu2dTYhkVxWA7+04PZmG2SmzFFcuhiiRWUyGXtR9TWek0SgEFV34gxI0MThKwLhJJrgwLsZoCMYgij8oxoVgJDIK81712I6KKC6M7gRd6kpF7LapOVLM1Ez/1Ku6977zqt679+ttn3PePd+5X996r4pqa/iBAARqCVjYQAAC9QQQhN0BgRkEEITtAQEEYQ9AII4AJ0gcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMIIEgcN7IyIYAgmQyaNuMI9E6QsizfbK09LyJnVlZWfjsYDKq41slaJoGyLN9qrXXGmF1r7WuDweAXy1xP3bV7JUhVVY+JyJestauThkTk7ysrK08MBoPvdhEwazpMYHt7+/7RaPQta+1bDv5GRL5/5syZj5w9e/Z/XWLWG0HKsvyAtfZ7dfBE5JtFUXy0S3BZy2ECZVk+bIx52Vp7Tw2bbzjnPtYlbr0QZGdn5/T+/v5fjDGvnwPvJefcx7sEmLXcIlBV1fuMMT/w4PGAc+7XHnELCemFIFVVvcMY8xMfIpwkPpQWG+Nxchxc0BXn3BOLXWH91XohSFmWn7HWXvGFJiJfL4riEd944tojUJble621Lwdc4VXn3PgPYid++iLIQ9baH4cQE5EXi6J4NCSHWF0CgSfH5OJfcc5d0l1JfLVeCHL9+vU3jEajvxpjToW0iiQhtHRjh8Phe0Tkh6FVReTtRVH8LDSvrfheCBJ4k3eIFZK0tXXq60aeHOOCPMVqMq6qqj5rjHk2tAaShBKLj28gx9XTp08/dO7cuf34q+tn9uYEmbSOJPqbQKtianKMufROkNsvtzhJtHa1Up0U5eitIEiitKuVyqQqR68FQRKl3d2wTMpy9F4QJGm4uxumpy5HEoIgScNdHpmegxzJCIIkkbs8Mi0XOZISBEkid3tgWk5yJCcIkgTu9sDw3ORIUhAkCdz1nuE5ypGsIEjiues9w3KVI2lBkMRz988Ji5VDRMrd3d2tra2tPZ2VLKdKLz9qEoKKz26F0DocOxwO3ykiPzLGvC6kSipyJH+CTIaKJCHb+1YsctzikPwJgiTIEU7gbkY2gnBP4rdNODkOc8pKECSZLQlyHOeTnSBIMl0S5JjOJUtBkISnVX4vODO6SZ8GhKdbPK2aJ0q2JwhPt5BjnhxZPeadBSPHk4R7Dh89Mn+JdRBRTpIgh58cnCBHOOUgCXL4y4EgU1ilLAlyhMmBIDW8UpQEOcLlQJAZzKqqetoYczkUaxe/5hQ5Qqd4Nz77x7xznm6NBRmLEvTTJUmQI2h0x4IRZA6/qqq+YIx5MgLzl51zn47IU0tBjuYoEcSDYR8lQQ6PwXqEIIgHpHFInyRBDs+heoQhiAekSUgfJEGOgIF6hCKIB6SDIV2WBDkCh+kRjiAekI6GdFES5IgYpEcKgnhAmhbSJUmQI3KIHmkI4gGpLqQLkiBHgwF6pCKIB6RZIcuUBDkaDs8jHUE8IM0LWYYkyDFvKjq/RxAdjgt9nwQ5lIbmUQZBPCD5hiziJEEO32noxCGIDsc7VdqUBDmUh+VRDkE8IIWGtCEJcoROQSceQXQ4HquiKQlytDQkj7II4gEpNkRDklg5jDE7J0+efPDChQv/jV0/eXyrSet7oIkkInLVGPOKtXY1cKHIEQisLpwTRAnkrDINJBkZY+4JXCJyBAKbFY4gijBbkiRkhcgRQssjFkE8IGmFNDhJfJaAHD6UAmMQJBBY0/CWJEGOpoOpyUeQlsAu8OUWcrQ4QwRpEe4CJEGOlueHIC0DblES5FjA7BBkAZDrLlGW5UVjzKvW2tBHueOSLzjnHl/i8rO4NIIsacy35Yh5E/Dgipf+5XRLwrewyyLIwlDfvZCSHJOCSNLiDBGkRbjTSivLgSQtzw9BWgZ8sHxLciBJizNEkBbhLlAOJGlpjgjSEtglyIEkLcwSQVqAqiTHjjHmD8aYT0YskRv3CGjTUhBECaTyDfmdNwGrqnrOGHMpYpnPOuc+F5FHygECCNLSdmhwQ37sHXIkaWlIHmURxANSaIimHJNrI0noFHTiEUSH450qbciBJMpDCiiHIAGw5oW2KQeSzKPfzu8RRInrIuRAEqVhBZRBkABYdaGLlANJFAYWUAJBAmBNC12GHEjScGgB6QgSAOto6DLlQJIGgwtIRZAAWAdDuyAHkkQOLyANQQJgTUK7JAeSRAwwIAVBAmCNQ7soB5IEDjEgHEECYHVZDiQJGGRAKIJ4wuqDHEjiOcyAMATxgNUnOZDEY6ABIQgyB1asHCLym/39/Y2LFy/+J2AeqqF8wLE5TgSZwXA4HDoR+akx5t4Q1F2Qg5MkZGL1sQhSwyYFOZCkuSQIMoVhSnIgSTNJEOQIvxTlQJJ4SRDkALuU5UCSOEkQ5Da3HORAknBJEMQYk5McSBImSfaC5CgHkvhLkrUgOcuBJH6SZCsIctzdILzjzhuFhwggx/ENgSTTJcnuBEGO+r+WSHKcTVaCIMf8191IcphRNoIgx3w5uHHP9ARBDn85kCSzEwQ5wuWYZJRl+VVr7SciKjzjnLsckde5lKRfYiFH8/3WQJLLzrlnmq9guRWSFQQ59DZWA0medM59UW8li6+UpCDIob+RcpUkOUGQQ18OhXuS3p4kSQmCHO3JkaskyQiCHO3LkaMkSQiCHIuTIzdJei8Icixejpwk6bUgyLE8OXKRpLeCIMfy5chBkl4KghzdkSN1SXonCHJ0T46UJemVIMjRXTlSlaQ3gmxvb99/8+bNXxpjToVsk/EXSa+urm6ur6//OySP2HgCZVk+b619PLSCtfbRwWDwYmhem/G9EOTGjRun9vb2XjPGvCkEBnKE0NKNjZXEGHOfc+6PuquJr9YLQa5du1asrKxcC2lTRH6/trbmzp8//6+QPGL1CMR8wFFEPl8UxVN6q2hWqReCVFV1yRjznG+rIvK70Wi0sbm5+U/fHOLaIVBV1QvGmMd8q4vIK0VRvMs3vu24XghSluUHrbXf9oHByeFDabExISeJiHynKIoPLXaF9VfriyBnrbVzX5dycnRlWx1fh+9JIiKfKori+a500gtBxrDKsnzJWvtIHThOjq5sqfp1zDtJRORPu7u7b9va2trrSje9EaSqqntF5Mr4UeBReOP/I7i2tvZ+bsi7sq3q11FV1dPGmGlf6FCdOHHiw+vr63/rUhe9EWQCbXt7+z4RebeIPCAi/7DW/so597UuQWUtswkMh8NNEXnYGPNGEfmziFzd2Nj4eRe59U6QLkJkTekSQJB0Z0tnCgQQRAEiJdIlgCDpzpbOFAggiAJESqRLAEHSnS2dKRBAEAWIlEiXAIKkO1s6UyCAIAoQKZEuAQRJd7Z0pkAAQRQgUiJdAgiS7mzpTIEAgihApES6BBAk3dnSmQIBBFGASIl0CSBIurOlMwUCCKIAkRLpEkCQdGdLZwoEEEQBIiXSJYAg6c6WzhQIIIgCREqkSwBB0p0tnSkQQBAFiJRIlwCCpDtbOlMggCAKECmRLgEESXe2dKZAAEEUIFIiXQIIku5s6UyBAIIoQKREugQQJN3Z0pkCAQRRgEiJdAkgSLqzpTMFAgiiAJES6RJAkHRnS2cKBBBEASIl0iXwf5ih/DK+21UwAAAAAElFTkSuQmCC')
+}
+</style>
+<script type="text/javascript" src="${contextPath}/backend/main/v8/thirdparty/jquery/jquery-1.8.3.min.js?${VERSION}"></script>
+<script type="text/javascript">
+	jQuery(function(){
+		toRealNameAuthPage('${certUrl}','${useSystemInfoUrl}','${appImg}');
+		
+		function toRealNameAuthPage (noUseSystemInfoRealNameAuthUrl, useSystemInfoRealNameAuthUrl,img) {
+		    var privacyTips1 = '<div class="privacy-bg-1">' +
+		        '<div class="privacy-box-1">' +
+		        '<span class="privacy-close"></span>' +
+		        '<div class="privacy-content-1">' +
+		        '<div class="privacy-content-header">身份认证</div>' +
+		        '<div class="privacy-content-img"><img src="' + img + '"/></div>' +
+		        '<div>您还没有进行实名认证，将会跳转到实名认证页面，请您选择是否授权使用本平台的个人信息，进行自动实名认证！</div>' +
+		        '<div class="privacy-content-footer"><h3>授权认证后应用将获得以下权限</h3><ul><li>姓名</li><li>身份证号</li><li>手机号码</li></ul></div>' +
+		        '</div>' +
+		        '<div class="privacy-btn-1">' +
+		        '<a class="privacy-btn-one" href="' + useSystemInfoRealNameAuthUrl + '">授权认证</a><a class="privacy-btn-two" href="' + noUseSystemInfoRealNameAuthUrl + '">手动认证</a>' +
+		        '</div>' +
+		        '</div>' +
+		        '</div>';
+		    document.documentElement.style.overflowY = 'hidden';
+		    jQuery('body').append(privacyTips1);
+		
+		    /* jQuery('.privacy-btn-one').on('click', function () {
+		        document.documentElement.style.overflowY = 'scroll';
+		        //$('.privacy-bg-1').css('display', 'none')
+		        closeWindow()
+		    })
+		    jQuery('.privacy-btn-two').on('click', function () {
+		        document.documentElement.style.overflowY = 'scroll';
+		       // document.documentElement.style.overflowY = 'hidden';
+		        closeWindow()
+		    }) */
+		    jQuery('.privacy-close').on('click', function () {
+		        document.documentElement.style.overflowY = 'scroll';
+		        closeWindow()
+		    })
+		}
+		
+		function closeWindow(){
+			 window.location.href="about:blank";
+			 window.close();
+		}
+	});
+</script>
+</head>
+<body>
+
+</body>
+</html>

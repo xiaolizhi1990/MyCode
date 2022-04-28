@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>正在跳转...</title>
+<script type="text/javascript">
+
+	
+	/**
+     * 动态加载JS
+     *  url 脚本地址
+     *  callback  回调函数
+     */
+    function dynamicLoadJs() {
+    	window.location.href = '${forwardUrl}';
+    }
+</script>
+<script type="text/javascript" src="${ssoDomain}/login?redirect=true&service=login" onerror="dynamicLoadJs()" onload="dynamicLoadJs()"></script>
+</head>
+<body>
+
+</body>
+</html>
