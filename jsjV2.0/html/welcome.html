@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>智舰电子脚手架云平台</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8"/>
+        <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+        <link rel="stylesheet" href="../css/font.css">
+        <link rel="stylesheet" href="../css/xadmin.css">
+        <script type="text/javascript" src="../js/echarts-all.js"></script>
+        <script type="text/javascript" src="../js/showtime.js"></script>
+        <script type="text/javascript" src="../js/echarts.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.min.js"></script>
+    </head>
+    <body>
+    <div class="x-body layui-anim layui-anim-up">
+        <blockquote class="layui-elem-quote">欢迎:
+            <span class="x-red">admin</span>! 当前时间为:
+            <span id="time"></span>
+        </blockquote>
+        <fieldset class="layui-elem-field">
+
+            <div class="charts-box">
+                <div id="chart1" style="height: 500px"></div>
+                <br>
+                <div id="chart2" style="height: 500px"></div>
+                <br>
+                <div id="chart3" style="height: 500px"></div>
+            </div>
+
+        </fieldset>
+
+    </div>
+
+    <!--echarts图表温度-->
+    <script type="text/javascript">
+        function getRequest() {
+            var url = location.search; //获取url中"?"符后的字串
+            var theRequest = new Object();
+            if (url.indexOf("?") != -1) {
+                var str = url.substr(1);
+                strs = str.split("&");
+                for(var i = 0; i < strs.length; i ++) {
+                    theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);
+                }
+            }
+            return theRequest;
+        }
+
+        $(function () {
+            var jsonData = [];
+                var params = getRequest();
+                $.ajax({
+                    type: 'get',
+                    url: 'http://lh.zjadi.com/api/searchDevice.do',
+                    data: {
+                        id:params.id,
+                        devid:"WHS-1001"
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        var data = result.data; //要导出的json数据
+                        var v1 = [];
+                        var v2 = [];
+                        var v3 = [];
+                        var v4 = [];
+                        for(var i=0;i<data.length;i++){
+                            v1.push(data[i].datatime);
+                            v2.push(data[i].val[0]);
+                            v3.push(data[i].val[1]);
+                            v4.push(data[i].val[2]);
+                            jsonData.push({
+                                d1:data[i].devid
+                                ,d2:data[i].datatime
+                                ,d3:data[i].val[0]
+                                ,d4:data[i].val[1]
+                                ,d5:data[i].val[2]
+                            })
+                        }
+                        //温度折线图
+                        var myChart1 = echarts.init(document.getElementById('chart1'));
+                        option = {
+                            tooltip:{
+                                show: true,
+                                formatter: '{b0}<br />{c0}℃'
+                            },
+                            xAxis: {
+                                type: 'category',
+                                data: v1,
+                                name:'时间'
+                            },
+                            yAxis: {
+                                type: 'value',
+                                name:'温度(℃)'
+                            },
+                            series: [
+                                {
+                                    data: v2,
+                                    type: 'line'
+                                }]
+                        };
+
+                        myChart1.setOption(option);
+                        //X轴数据折线图
+                        var myChart2 = echarts.init(document.getElementById('chart2'));
+                        option = {
+                            tooltip:{
+                                show: true,
+                                formatter: '{b0}<br />{c0}°'
+                            },
+                            xAxis: {
+                                type: 'category',
+                                data: v1,
+                                name:'时间'
+                            },
+                            yAxis: {
+                                type: 'value',
+                                name:'X轴数据(°)',
+                                max:0.4,
+                                min:-0.4
+                            },
+                            series: [{
+                                data: v3,
+                                type: 'line'
+                            }]
+                        };
+                        myChart2.setOption(option);
+
+                        //Y轴数据折线图
+                        var myChart3 = echarts.init(document.getElementById('chart3'));
+                        option = {
+                            tooltip:{
+                                show: true,
+                                formatter: '{b0}<br />{c0}°'
+                            },
+                            xAxis: {
+                                type: 'category',
+                                data: v1,
+                                name:'时间'
+                            },
+                            yAxis: {
+                                type: 'value',
+                                name:'Y轴数据(°)',
+                                max:0.4,
+                                min:-0.4
+                            },
+                            series: [{
+                                data: v4,
+                                type: 'line',
+                                emphasis: {
+                                    show:true
+                                }
+                            }]
+                        };
+                        myChart3.setOption(option);
+                    }
+                });
+
+            });
+    </script>
+
+
+    <script>
+        showtime();
+    </script>
+    </body>
+</html>

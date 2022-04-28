@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>华电漯河脚手架云平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script src="../js/nbase.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/showtime.js"></script>
+    <script type="text/javascript" src="../js/echarts.min.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="../js/html5.min.js"></script>
+      <script src="../js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">系统首页</a>
+        <a href="">监测数据</a>
+        <a>
+          <cite>WHS-1003</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+
+      </div>
+
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th>测试点号</th>
+            <th>监测设备</th>
+            <th>X轴数据</th>
+            <th>Y轴数据</th>
+            <th>温度</th>
+            <th>实时数据X</th>
+            <th>实时数据Y</th>
+            <th>记录时间</th>
+            <th >操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+      </table>
+    </div>
+    <script>
+      layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+      });
+
+
+
+      /*数据展示*/
+      function getRequest() {
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+          var str = url.substr(1);
+          strs = str.split("&");
+          for(var i = 0; i < strs.length; i ++) {
+            theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);
+          }
+        }
+        return theRequest;
+      }
+
+      /*设备1003的表格数据*/
+      function showData3() {
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid: 'WHS-1003'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            for (var i = 0; i < data.length; i++) {
+              var s = "";
+              var M1 = [];
+              var M2 = [];
+              var M3 = [];
+              var M4 = [];
+              M1.push(data[i].datatime);
+              /*时间*/
+              M2.push(data[i].val[0]);
+              /*温度*/
+              M3.push(data[i].val[1]);
+              /*X轴数据*/
+              M4.push(data[i].val[2]);
+              /*Y轴数据*/
+
+              s +=
+                      "<tr>" +
+                      "<td>" + "3#倾角仪" + "</td>"            /*测试点号*/
+                      + "<td>" + 'WHS-1003' + "</td>"        /*监测设备*/
+                      + "<td>" + M3 + "</td>"       /*X轴数据*/
+                      + "<td>" + M4 + "</td>"       /*Y轴数据*/
+                      + "<td>" + M2 + "</td>"       /*温度*/
+                      + "<td id='testx3'>" + M3 + "</td>"    /*倾斜量X*/
+                      + "<td id='testy3'>" + M4 + "</td>"    /*倾斜量Y*/
+                      + "<td>" + M1 + "</td>"     /*记录时间*/
+                      + "<td class='control' did=" + data.did + ">"
+                      + "<a  class='layui-btn layui-btn-sm layui-btn-warm marked' title='取消标记' href='javascript:;'>"
+                      + "取消标记" +
+                      "</a>" +
+                      "<a title='删除' class='layui-btn layui-btn-sm layui-btn-danger delete' href='javascript:;'>"
+                      + "删除" +
+                      "</a>" +
+                      "</td>" +
+                      "</tr>";
+              $("#tbody").append(s);
+            }
+            del();
+            $(function() {
+              $("table tr td:nth-child(3),:nth-child(4)").each(function() {
+                if($(this).text() > 1||$(this).text() < -1) {
+                  $(this).parent().css("background", "red");
+                  $(this).parent().css("color", "white");
+                }
+              });
+            });
+            unmarked2();
+          }
+        });
+
+      }
+      function  del(){
+        $(".control").on("click",".delete",function(){
+          var did = $(this).parent().attr("did");
+          var that = this;
+          layer.confirm('确认要删除吗？',function(index){
+            //发异步删除数据
+            $(that).parent().parent().remove();
+            var data = {};
+            data.type = "delete";
+            data.did = did;
+            $.ajax({
+              type: 'POST',
+              url: this_baseUrl+'/api/searchDevice.do',
+              data: JSON.stringify(data),
+              contentType: "application/json",
+              dataType: 'json',
+              success: function (msg) {
+                layer.msg('已删除!',{icon:1,time:1000});
+              }
+            });
+          });
+        });
+      }
+
+      function unmarked2() {
+        $(".control").on("click",".marked",function(){
+          var $pat = $(this).parent();
+          $pat.parent().css("background", "white");
+          $pat.parent().css("color", "#666666");
+        })
+      }
+      showData3();
+    </script>
+
+  </body>
+
+</html>
+

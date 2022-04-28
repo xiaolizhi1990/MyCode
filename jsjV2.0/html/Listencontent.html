@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>智舰电子脚手架云平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="../js/html5.min.js"></script>
+    <script src="../js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">系统首页</a>
+        <a href="">工程管理</a>
+        <a>
+          <cite>监测方案</cite>
+        </a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i>
+    </a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <input type="text" id="inputValue" name="inputValue"  placeholder="请输入方案名" autocomplete="off" class="layui-input">
+            <button class="layui-btn"  onclick="ListenSearch()"><i class="layui-icon">&#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-warm layui-btn-xs"  onclick="x_admin_show('添加新方案','plan-add.html')" ><i class="layui-icon">&#xe642;</i>添加方案</button>
+
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>工程名称</th>
+            <th>监测方案</th>
+            <th >操作</th>
+        </tr>
+        </thead>
+        <tbody id="listenHtml">
+
+        </tbody>
+    </table>
+
+</div>
+<script>
+    layui.use(['form','layer','jquery'], function () {
+        //初始化
+        ListenSearch();
+    });
+
+
+    function delAll (argument) {
+
+        var data = tableCheck.getData();
+
+        layer.confirm('确认要删除吗？'+data,function(index){
+            //捉到所有被选中的，发异步进行删除
+            layer.msg('删除成功', {icon: 1});
+            $(".layui-form-checked").not('.header').parents('tr').remove();
+        });
+    }
+
+    /*搜索框的方法*/
+    function ListenSearch() {
+        var data = {};
+        data.type = "search";
+        data.ProjectName = $("#inputValue").val();
+        $.ajax({
+            type: 'POST',
+            url: 'http://lh.zjadi.com/api/monitoringProgramme.do',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function (msg) {
+                var tempHtml = "";
+                var data = msg.data;
+                $(data).each(function (index,obj) {
+                    tempHtml += "<tr>"
+                            +"<td class='td-manage'>"+obj.ProjectName+"</td>"
+                            +"<td>"+obj.planName+"</td>"
+                            +"<td class='control' uuid="+obj.uuid+">"
+                            + '<a title="编辑" class="layui-btn layui-btn-sm layui-btn-normal edit"  href="javascript:;">'
+                            + "编辑" +
+                            '</a>' +
+                            '<a title="删除" class="layui-btn layui-btn-sm layui-btn-danger delete"  href="javascript:;">'
+                            + "删除" +
+                            '</a>'
+                            +"</td>"
+                            +"</tr>";
+                });
+
+                $("#listenHtml").html(tempHtml);
+
+                del();
+                edit();
+            }
+        });
+
+
+    }
+
+
+
+
+
+    function  edit() {
+        $(".control").on("click", ".edit", function () {
+            var uuid = $(this).parent().attr("uuid");
+            x_admin_show("编辑", "plan-add.html?uuid="+uuid);
+        });
+    }
+
+    function  del(){
+        $(".control").on("click",".delete",function(){
+            var uuid = $(this).parent().attr("uuid");
+            var that = this;
+            layer.confirm('确认要删除吗？',function(index){
+                //发异步删除数据
+                $(that).parent().parent().remove();
+                var data = {};
+                data.type = "delete";
+                data.uuid = uuid;
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://lh.zjadi.com/api/monitoringProgramme.do',
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    dataType: 'json',
+                    success: function (msg) {
+                        layer.msg('已删除!',{icon:1,time:1000});
+                    }
+                });
+            });
+        });
+    }
+
+
+</script>
+</body>
+
+</html>

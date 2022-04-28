@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>智舰电子脚手架云平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui/css/layui.css"  media="all">
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top:50px;">
+    <legend style="text-align: center"><b style="font-size: larger">智舰电子发电有限公司</b></legend>
+</fieldset>
+
+<div class="layui-carousel" id="test10">
+    <div carousel-item="" style="text-align: center">
+        <div><img src="../images/company3.jpg"></div>
+    </div>
+</div>
+<blockquote class="layui-elem-quote layui-quote-nm">
+    <div>
+     <pre>
+	<b>武汉智舰电子仪器有限公司</b><br />
+	武汉智舰电子仪器有限公司  成立于2005年，是领先的低功耗嵌入式平台研创中心、嵌入式系统解决方案提供商；公司致力于为智能设备制造商提供有竞争力的嵌入式平台和系统解决方案，让用户可以专注于自己的应用。 公司位于武汉市美丽的汤逊湖畔，东湖高新大学科技园区，环境优美，地理位置优越、交通便利，周边分布有武大、华科、理工大、华师等科技园，产业氛围十分浓厚；依托华中地区强大的技术和人才优势、与众多科研院校紧密合作，华和技术(WONHERE)相继承接并完成了许多非标设备及配件的研制，积累了丰富的实践经验和雄厚的技术实力。
+	智舰电子是智能物联技术集成创新者。自2005年在武汉光谷成立以来，我们始终着眼于不断增长的行业物联网应用需求，致力于为从事行业物联网应用服务的优秀企业提供有竞争力的综合技术方案和集成中间件产品，深度协同挖掘自身优势，提升敏捷响应能力和精准服务能力，为客户创造更大价值。依托在物联网领域13年的技术沉淀，我们拥有一支经验丰富的研发、生产、服务专业团队，在传感通信、智能交互、运动控制、数据挖掘、边缘计算等领域协同发展，围绕行业物联网的不同应用场景构建了智能传感器、物联组网设备、数据平台系统等三大类产品体系。
+	公司主要产品及系统已经在环保、水利、岩土工程、电力、消防、交通、水务、机械制造等行业的智能化工程项目中得到广泛应用，深得我们的合作伙伴及其终端客户的信赖。
+     </pre>
+    </div>
+</blockquote>
+<blockquote class="layui-elem-quote layui-quote-nm">
+    <div>
+     <pre>
+	<b>最新消息</b><br />
+	近日，武汉智舰电子仪器有限公司收到由中国质量体系认证中心颁发的ISO9001:2008质量管理体系认证监督审核证书，这标志着我们顺利通过了ISO9001质量管理体系的检审工作。公司于2009年首次导入ISO9000质量管理体系，并于同年10月通过ISO9001:2008质量体系认证，在体系运行的近5年来不断完善体系建设，将其与日常工作有效结合，使工作流程更加规范、工作效率有效提高、客户满意度也得到提升。此次审核，不仅审核了之前ISO9001:2008质量体系认证的项目，同时也审核了2014年新增的项，进行的审核为期2天，认证中心的3位老师通过翻阅资料、面谈交流、文档调阅等形式对公司各个部门进行了客观、公正的审核，在对公司体系建设、运行情况做出肯定的同时，也指出一些不足之处，公司将针对这些问题制定改进计划，坚持持续改进原则，不断完善质量管理体系并将其落实在工作中。
+	经过审核，中国质量体系认证中心认为公司的质量体系运行符合GB/T19001-2008—ISO9001:2008标准，继续推荐认证注册。我们也将以此为新的开始，以更高的标准推进质量管理体系的建设与运行。
+     </pre>
+    </div>
+</blockquote>
+<blockquote  style="text-align: center">
+
+</blockquote>
+
+
+
+<script src="../lib/layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    layui.use(['carousel', 'form'], function(){
+        var carousel = layui.carousel
+                ,form = layui.form;
+
+        //常规轮播
+        carousel.render({
+            elem: '#test1'
+            ,arrow: 'always'
+        });
+
+        //改变下时间间隔、动画类型、高度
+        carousel.render({
+            elem: '#test2'
+            ,interval: 1800
+            ,anim: 'fade'
+            ,height: '120px'
+        });
+
+        //设定各种参数
+        var ins3 = carousel.render({
+            elem: '#test3'
+        });
+        //图片轮播
+        carousel.render({
+            elem: '#test10'
+            ,width: '1920px'
+            ,height: '754px'
+            ,interval: 5000
+        });
+
+        //事件
+        carousel.on('change(test4)', function(res){
+            console.log(res)
+        });
+
+        var $ = layui.$, active = {
+            set: function(othis){
+                var THIS = 'layui-bg-normal'
+                        ,key = othis.data('key')
+                        ,options = {};
+
+                othis.css('background-color', '#5FB878').siblings().removeAttr('style');
+                options[key] = othis.data('value');
+                ins3.reload(options);
+            }
+        };
+
+        //监听开关
+        form.on('switch(autoplay)', function(){
+            ins3.reload({
+                autoplay: this.checked
+            });
+        });
+
+        $('.demoSet').on('keyup', function(){
+            var value = this.value
+                    ,options = {};
+            if(!/^\d+$/.test(value)) return;
+
+            options[this.name] = value;
+            ins3.reload(options);
+        });
+
+        //其它示例
+        $('.demoTest .layui-btn').on('click', function(){
+            var othis = $(this), type = othis.data('type');
+            active[type] ? active[type].call(this, othis) : '';
+        });
+    });
+</script>
+
+</body>
+</html>

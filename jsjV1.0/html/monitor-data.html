@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>华电漯河脚手架云平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script src="../js/nbase.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/showtime.js"></script>
+    <script type="text/javascript" src="../js/echarts.min.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="../js/html5.min.js"></script>
+      <script src="../js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">系统首页</a>
+        <a href="">监测数据</a>
+        <a>
+          <cite>监测数据</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <!--<form class="layui-form layui-col-md12 x-so">-->
+          <!--<input class="layui-input" placeholder="开始日" name="start" id="start">-->
+          <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
+          <!--<button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>-->
+        <!--</form>-->
+      </div>
+
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th>测试点号</th>
+            <th>监测设备</th>
+            <th>X轴数据</th>
+            <th>Y轴数据</th>
+            <th>温度</th>
+            <th>实时数据X</th>
+            <th>实时数据Y</th>
+            <th>记录时间</th>
+            <th >操作</th>
+          </tr>
+        </thead>
+        <tbody class="trhtml">
+          <tr id="trhtml1"></tr>
+          <tr id="trhtml2"></tr>
+          <tr id="trhtml3"></tr>
+        </tbody>
+      </table>
+      <fieldset>
+        <div class="charts-box">
+          <div id="chart1" style="height:500px"></div>
+          <div id="chart2" style="height: 500px"></div>
+          <div id="chart3" style="height: 500px"></div>
+          <div id="chart4" style="height: 500px"></div>
+          <div id="chart5" style="height: 500px"></div>
+          <div id="chart6" style="height: 500px"></div>
+        </div>
+      </fieldset>
+
+    </div>
+    <script>
+      layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+      });
+
+
+//      $(document).ready(function(){
+//        $("tr:gt(0) td:last-child").each(function(i,j){
+//          if(new Date($(this).text())<new Date('2013-07-01 11:00:00')){
+//            $(this).parent().css('color','red');
+//          }
+//        });
+//      });
+
+
+      /*数据展示*/
+      function getRequest() {
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+          var str = url.substr(1);
+          strs = str.split("&");
+          for(var i = 0; i < strs.length; i ++) {
+            theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);
+          }
+        }
+        return theRequest;
+      }
+      /*设备1001*/
+      $(function () {
+        var jsonData = [];
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid: 'WHS-1001'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            var v1 = [];
+            var v2 = [];
+            var v3 = [];
+            var v4 = [];
+//            datatime: "2019-06-15 13:27:19"
+//            devid: "WHS-1001"
+//            did: "5d0481f689f97d0ff021e787"
+//            id: "5d0481f689f97d0ff021e788"
+//            port: "0"
+//            val: ["27.700800", "0.166100", "-0.699400"]
+            for (var i = 0; i < data.length; i++) {
+              v1.push(data[i].datatime);  /*时间*/
+              v2.push(data[i].val[0]);    /*温度*/
+              v3.push(data[i].val[1]);    /*X轴数据*/
+              v4.push(data[i].val[2]);    /*Y轴数据*/
+              jsonData.push({
+                d1: data[i].devid
+                , d2: data[i].datatime
+                , d3: data[i].val[0]
+                , d4: data[i].val[1]
+                , d5: data[i].val[2]
+              })
+            }
+            var myChart = echarts.init(document.getElementById("chart1"));//设置一个echarts容器
+
+            option = {
+              title : {
+                text: 'WHS-1001'
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                    color: '#999'
+                  }
+                }
+              },
+              legend: {  //显示的图例
+                show: true,
+                bottom: 10,
+                left: 50,
+                textStyle: {
+                  color: '#666',
+                  fontSize: 12
+                },
+                itemGap: 20,
+                data: ['WHS-1001'],
+                selectedMode: 'single'  //每次显示一种设备，点击图例时切换
+              },
+              grid: {              //图表相对于容器的位置
+                show: false,
+                top: '60',
+                bottom: '60',
+                right: '60',
+                left: '60'
+              },
+              xAxis: [  //x轴为日期
+                {
+                  type: 'category',
+                  data: v1.reverse(),
+                  interval: 0
+                }
+              ],
+
+              yAxis: [     //x/y轴位数据
+                {
+                  name: '倾斜角度(°)',
+                  type: 'value'
+                }
+              ],
+              series: [
+                {
+                  name: 'X轴数据',
+                  type: 'line',
+                  smooth: true,       //圆滑的折线
+                  data: v3.reverse(),
+                  symbolSize: 10,        //拐点图标大小
+                  itemStyle: {
+                    normal: {color: '#00CCFF'}  //折线图颜色
+                  },
+                  areaStyle: {                              //下边为设置阴影的区域
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                },
+                {
+                  name: 'Y轴数据',
+                  type: 'line',
+                  smooth: true,
+                  symbolSize: 10,
+                  data: v4,
+                  itemStyle: {
+                    normal: {
+                      color: '#f7b851'
+                    }
+                  },
+                  areaStyle: {
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                }
+              ]
+            };
+            myChart.setOption(option);
+
+            //这块代码也很重要，因为echarts图表的容器必须要设置一个有确定大小
+
+            //，height、width的容器，但是对于每个屏幕大小不一的电脑就会有问题
+
+            //，所以，这里resize可 自适应一下
+
+            $(window).resize(function () {
+
+              myChart.resize();
+            });
+          }
+        });
+      });
+      /*设备1002*/
+      $(function () {
+        var jsonData = [];
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid: 'WHS-1002'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            var A1 = [];
+            var A2 = [];
+            var A3 = [];
+            var A4 = [];
+//            datatime: "2019-06-15 13:27:19"
+//            devid: "WHS-1001"
+//            did: "5d0481f689f97d0ff021e787"
+//            id: "5d0481f689f97d0ff021e788"
+//            port: "0"
+//            val: ["27.700800", "0.166100", "-0.699400"]
+            for (var i = 0; i < data.length; i++) {
+              A1.push(data[i].datatime);  /*时间*/
+              A2.push(data[i].val[0]);    /*温度*/
+              A3.push(data[i].val[1]);    /*X轴数据*/
+              A4.push(data[i].val[2]);    /*Y轴数据*/
+              jsonData.push({
+                d1: data[i].devid
+                , d2: data[i].datatime
+                , d3: data[i].val[0]
+                , d4: data[i].val[1]
+                , d5: data[i].val[2]
+              })
+            }
+            var myChart = echarts.init(document.getElementById("chart2"));//设置一个echarts容器
+
+            option = {
+              title : {
+                text: 'WHS-1002'
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                    color: '#999'
+                  }
+                }
+              },
+              legend: {  //显示的图例
+                show: true,
+                bottom: 10,
+                left: 50,
+                textStyle: {
+                  color: '#666',
+                  fontSize: 12
+                },
+                itemGap: 20,
+                data: ['WHS-1002'],
+                selectedMode: 'single'  //每次显示一种设备，点击图例时切换
+              },
+              grid: {              //图表相对于容器的位置
+                show: false,
+                top: '60',
+                bottom: '60',
+                right: '60',
+                left: '60'
+              },
+              xAxis: [  //x轴为日期
+                {
+                  type: 'category',
+                  data: A1.reverse(),
+                  interval: 0
+                }
+              ],
+
+              yAxis: [     //x/y轴位数据
+                {
+                  name: '倾斜角度(°)',
+                  type: 'value'
+                }
+              ],
+              series: [
+                {
+                  name: 'X轴数据',
+                  type: 'line',
+                  smooth: true,       //圆滑的折线
+                  data: A3.reverse(),
+                  symbolSize: 10,        //拐点图标大小
+                  itemStyle: {
+                    normal: {color: '#00CCFF'}  //折线图颜色
+                  },
+                  areaStyle: {                              //下边为设置阴影的区域
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                },
+                {
+                  name: 'Y轴数据',
+                  type: 'line',
+                  smooth: true,
+                  symbolSize: 10,
+                  data: A4,
+                  itemStyle: {
+                    normal: {
+                      color: '#f7b851'
+                    }
+                  },
+                  areaStyle: {
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                }
+              ]
+            };
+            myChart.setOption(option);
+
+            //这块代码也很重要，因为echarts图表的容器必须要设置一个有确定大小
+
+            //，height、width的容器，但是对于每个屏幕大小不一的电脑就会有问题
+
+            //，所以，这里resize可 自适应一下
+
+            $(window).resize(function () {
+
+              myChart.resize();
+            });
+          }
+        });
+      });
+      /*设备1003*/
+      $(function () {
+        var jsonData = [];
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid: 'WHS-1003'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            var M1 = [];
+            var M2 = [];
+            var M3 = [];
+            var M4 = [];
+//            datatime: "2019-06-15 13:27:19"
+//            devid: "WHS-1001"
+//            did: "5d0481f689f97d0ff021e787"
+//            id: "5d0481f689f97d0ff021e788"
+//            port: "0"
+//            val: ["27.700800", "0.166100", "-0.699400"]
+            for (var i = 0; i < data.length; i++) {
+              M1.push(data[i].datatime);  /*时间*/
+              M2.push(data[i].val[0]);    /*温度*/
+              M3.push(data[i].val[1]);    /*X轴数据*/
+              M4.push(data[i].val[2]);    /*Y轴数据*/
+              jsonData.push({
+                d1: data[i].devid
+                , d2: data[i].datatime
+                , d3: data[i].val[0]
+                , d4: data[i].val[1]
+                , d5: data[i].val[2]
+              })
+            }
+            var myChart = echarts.init(document.getElementById("chart3"));//设置一个echarts容器
+
+            option = {
+              title : {
+                text: 'WHS-1003'
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                    color: '#999'
+                  }
+                }
+              },
+              legend: {  //显示的图例
+                show: true,
+                bottom: 10,
+                left: 50,
+                textStyle: {
+                  color: '#666',
+                  fontSize: 12
+                },
+                itemGap: 20,
+                data: ['WHS-1003'],
+                selectedMode: 'single'  //每次显示一种设备，点击图例时切换
+              },
+              grid: {              //图表相对于容器的位置
+                show: false,
+                top: '60',
+                bottom: '60',
+                right: '60',
+                left: '60'
+              },
+              xAxis: [  //x轴为日期
+                {
+                  type: 'category',
+                  data: M1.reverse(),
+                  interval: 0
+                }
+              ],
+
+              yAxis: [     //x/y轴位数据
+                {
+                  name: '倾斜角度(°)',
+                  type: 'value'
+                }
+              ],
+              series: [
+                {
+                  name: 'X轴数据',
+                  type: 'line',
+                  smooth: true,       //圆滑的折线
+                  data: M3.reverse(),
+                  symbolSize: 10,        //拐点图标大小
+                  itemStyle: {
+                    normal: {color: '#00CCFF'}  //折线图颜色
+                  },
+                  areaStyle: {                              //下边为设置阴影的区域
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                },
+                {
+                  name: 'Y轴数据',
+                  type: 'line',
+                  smooth: true,
+                  symbolSize: 10,
+                  data: M4,
+                  itemStyle: {
+                    normal: {
+                      color: '#f7b851'
+                    }
+                  },
+                  areaStyle: {
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                }
+              ]
+            };
+            myChart.setOption(option);
+
+            //这块代码也很重要，因为echarts图表的容器必须要设置一个有确定大小
+
+            //，height、width的容器，但是对于每个屏幕大小不一的电脑就会有问题
+
+            //，所以，这里resize可 自适应一下
+
+            $(window).resize(function () {
+
+              myChart.resize();
+            });
+          }
+        });
+      });
+      /*温度数据1*/
+      $(function () {
+        var jsonData = [];
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid:'WHS-1001'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            var M1 = [];
+            var M2 = [];
+            var M3 = [];
+            var M4 = [];
+//            datatime: "2019-06-15 13:27:19"
+//            devid: "WHS-1001"
+//            did: "5d0481f689f97d0ff021e787"
+//            id: "5d0481f689f97d0ff021e788"
+//            port: "0"
+//            val: ["27.700800", "0.166100", "-0.699400"]
+            for (var i = 0; i < data.length; i++) {
+              M1.push(data[i].datatime);  /*时间*/
+              M2.push(data[i].val[0]);    /*温度*/
+              M3.push(data[i].val[1]);    /*X轴数据*/
+              M4.push(data[i].val[2]);    /*Y轴数据*/
+              jsonData.push({
+                d1: data[i].devid
+                , d2: data[i].datatime
+                , d3: data[i].val[0]
+                , d4: data[i].val[1]
+                , d5: data[i].val[2]
+              })
+            }
+            var myChart = echarts.init(document.getElementById("chart4"));//设置一个echarts容器
+
+            option = {
+              title : {
+                text: '(WHS-1001)温度数据'
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                    color: '#999'
+                  }
+                }
+              },
+              legend: {  //显示的图例
+                show: true,
+                bottom: 10,
+                left: 50,
+                textStyle: {
+                  color: '#666',
+                  fontSize: 12
+                },
+                itemGap: 20,
+                data: ['WHS-1001'],
+                selectedMode: 'single'  //每次显示一种设备，点击图例时切换
+              },
+              grid: {              //图表相对于容器的位置
+                show: false,
+                top: '60',
+                bottom: '60',
+                right: '60',
+                left: '60'
+              },
+              xAxis: [  //x轴为日期
+                {
+                  type: 'category',
+                  data: M1.reverse(),
+                  interval: 0
+                }
+              ],
+
+              yAxis: [     //x/y轴位数据
+                {
+                  name: '温度(℃)',
+                  type: 'value'
+                }
+              ],
+              series: [
+                {
+                  name: '温度',
+                  type: 'line',
+                  smooth: true,       //圆滑的折线
+                  data: M2,
+                  symbolSize: 10,        //拐点图标大小
+                  itemStyle: {
+                    normal: {color: 'RED'}  //折线图颜色
+                  },
+                  areaStyle: {                              //下边为设置阴影的区域
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                }
+              ]
+            };
+            myChart.setOption(option);
+
+            //这块代码也很重要，因为echarts图表的容器必须要设置一个有确定大小
+
+            //，height、width的容器，但是对于每个屏幕大小不一的电脑就会有问题
+
+            //，所以，这里resize可 自适应一下
+
+            $(window).resize(function () {
+
+              myChart.resize();
+            });
+          }
+        });
+      });
+      /*温度数据2*/
+      $(function () {
+        var jsonData = [];
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid:'WHS-1002'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            var M1 = [];
+            var M2 = [];
+            var M3 = [];
+            var M4 = [];
+//            datatime: "2019-06-15 13:27:19"
+//            devid: "WHS-1001"
+//            did: "5d0481f689f97d0ff021e787"
+//            id: "5d0481f689f97d0ff021e788"
+//            port: "0"
+//            val: ["27.700800", "0.166100", "-0.699400"]
+            for (var i = 0; i < data.length; i++) {
+              M1.push(data[i].datatime);  /*时间*/
+              M2.push(data[i].val[0]);    /*温度*/
+              M3.push(data[i].val[1]);    /*X轴数据*/
+              M4.push(data[i].val[2]);    /*Y轴数据*/
+              jsonData.push({
+                d1: data[i].devid
+                , d2: data[i].datatime
+                , d3: data[i].val[0]
+                , d4: data[i].val[1]
+                , d5: data[i].val[2]
+              })
+            }
+            var myChart = echarts.init(document.getElementById("chart5"));//设置一个echarts容器
+
+            option = {
+              title : {
+                text: '(WHS-1002)温度数据'
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                    color: '#999'
+                  }
+                }
+              },
+              legend: {  //显示的图例
+                show: true,
+                bottom: 10,
+                left: 50,
+                textStyle: {
+                  color: '#666',
+                  fontSize: 12
+                },
+                itemGap: 20,
+                data: ['WHS-1002'],
+                selectedMode: 'single'  //每次显示一种设备，点击图例时切换
+              },
+              grid: {              //图表相对于容器的位置
+                show: false,
+                top: '60',
+                bottom: '60',
+                right: '60',
+                left: '60'
+              },
+              xAxis: [  //x轴为日期
+                {
+                  type: 'category',
+                  data: M1.reverse(),
+                  interval: 0
+                }
+              ],
+
+              yAxis: [     //x/y轴位数据
+                {
+                  name: '温度(℃)',
+                  type: 'value'
+                }
+              ],
+              series: [
+                {
+                  name: '温度',
+                  type: 'line',
+                  smooth: true,       //圆滑的折线
+                  data: M2,
+                  symbolSize: 10,        //拐点图标大小
+                  itemStyle: {
+                    normal: {color: 'RED'}  //折线图颜色
+                  },
+                  areaStyle: {                              //下边为设置阴影的区域
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                }
+              ]
+            };
+            myChart.setOption(option);
+
+            //这块代码也很重要，因为echarts图表的容器必须要设置一个有确定大小
+
+            //，height、width的容器，但是对于每个屏幕大小不一的电脑就会有问题
+
+            //，所以，这里resize可 自适应一下
+
+            $(window).resize(function () {
+
+              myChart.resize();
+            });
+          }
+        });
+      });
+      /*温度数据3*/
+      $(function () {
+        var jsonData = [];
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid:'WHS-1003'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            var M1 = [];
+            var M2 = [];
+            var M3 = [];
+            var M4 = [];
+//            datatime: "2019-06-15 13:27:19"
+//            devid: "WHS-1001"
+//            did: "5d0481f689f97d0ff021e787"
+//            id: "5d0481f689f97d0ff021e788"
+//            port: "0"
+//            val: ["27.700800", "0.166100", "-0.699400"]
+            for (var i = 0; i < data.length; i++) {
+              M1.push(data[i].datatime);  /*时间*/
+              M2.push(data[i].val[0]);    /*温度*/
+              M3.push(data[i].val[1]);    /*X轴数据*/
+              M4.push(data[i].val[2]);    /*Y轴数据*/
+              jsonData.push({
+                d1: data[i].devid
+                , d2: data[i].datatime
+                , d3: data[i].val[0]
+                , d4: data[i].val[1]
+                , d5: data[i].val[2]
+              })
+            }
+            var myChart = echarts.init(document.getElementById("chart6"));//设置一个echarts容器
+
+            option = {
+              title : {
+                text: '(WHS-1003)温度数据'
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'cross',
+                  crossStyle: {
+                    color: '#999'
+                  }
+                }
+              },
+              legend: {  //显示的图例
+                show: true,
+                bottom: 10,
+                left: 50,
+                textStyle: {
+                  color: '#666',
+                  fontSize: 12
+                },
+                itemGap: 20,
+                data: ['WHS-1003'],
+                selectedMode: 'single'  //每次显示一种设备，点击图例时切换
+              },
+              grid: {              //图表相对于容器的位置
+                show: false,
+                top: '60',
+                bottom: '60',
+                right: '60',
+                left: '60'
+              },
+              xAxis: [  //x轴为日期
+                {
+                  type: 'category',
+                  data: M1.reverse(),
+                  interval: 0
+                }
+              ],
+
+              yAxis: [     //x/y轴位数据
+                {
+                  name: '温度(℃)',
+                  type: 'value'
+                }
+              ],
+              series: [
+                {
+                  name: '温度',
+                  type: 'line',
+                  smooth: true,       //圆滑的折线
+                  data: M2,
+                  symbolSize: 10,        //拐点图标大小
+                  itemStyle: {
+                    normal: {color: 'RED'}  //折线图颜色
+                  },
+                  areaStyle: {                              //下边为设置阴影的区域
+                    normal: {
+                      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                      }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                      }], false)
+                    }
+                  }
+                }
+              ]
+            };
+            myChart.setOption(option);
+
+            //这块代码也很重要，因为echarts图表的容器必须要设置一个有确定大小
+
+            //，height、width的容器，但是对于每个屏幕大小不一的电脑就会有问题
+
+            //，所以，这里resize可 自适应一下
+
+            $(window).resize(function () {
+
+              myChart.resize();
+            });
+          }
+        });
+      });
+
+      /*设备1001的表格数据*/
+      function showData1() {
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid:'WHS-1001'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+//            datatime: "2019-06-15 13:27:19"
+//            devid: "WHS-1001"
+//            did: "5d0481f689f97d0ff021e787"
+//            id: "5d0481f689f97d0ff021e788"
+//            port: "0"
+//            val: ["27.700800", "0.166100", "-0.699400"]
+            data = data.reverse();
+            for (var i = 0; i < data.length; i++) {
+              var s = "";
+             /* var v1=[],v2=[];
+              v1.push(data[i].val[1]);
+              v2.push(data[i].val[2]);
+              var x,y;
+              x=Math.max.apply(Math, v1);
+              y=Math.max.apply(Math, v2);*/
+              s+=       "<td>"+"1#倾角仪"+"</td>"            /*测试点号*/
+                        +"<td>"+'WHS-1001'+"</td>"        /*监测设备*/
+                        +"<td>"+data[i].val[1]+"</td>"       /*X轴数据*/
+                        +"<td>"+data[i].val[2]+"</td>"       /*Y轴数据*/
+                        +"<td>"+data[i].val[0]+"</td>"       /*温度*/
+                        +"<td>"+data[i].val[1]+"</td>"    /*累计变化量X*/
+                        +"<td>"+data[i].val[2]+"</td>"    /*累计变化量Y*/
+                        +"<td>"+data[i].datatime+"</td>"     /*记录时间*/
+                        +"<td class='control' did="+data.did+">"
+                        +"<a  class='layui-btn layui-btn-sm layui-btn-warm marked' title='取消标记' href='javascript:;'>"
+                        +"取消标记"+
+                        "</a>"+
+                        "<a title='删除' class='layui-btn layui-btn-sm layui-btn-danger delete' href='javascript:;'>"
+                        +"删除"+
+                        "</a>"+
+                        "</td>";
+            }
+            $("#trhtml1").append(s);
+            del();
+            $("table tr td:nth-child(3),:nth-child(4)").each(function() {
+              if($(this).text() > 1||$(this).text() < -1) {
+                $(this).parent().css("background", "red");
+                $(this).parent().css("color", "white");
+              }
+            });
+            unmarked();
+          }
+        })
+        }
+
+      /*设备1002的表格数据*/
+      function showData2() {
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid:'WHS-1002'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            data = data.reverse();
+            for (var i = 0; i < data.length; i++) {
+              var s = "";
+             /* var v1=[],v2=[];
+              v1.push(data[i].val[1]);
+              v2.push(data[i].val[2]);
+              var x,y;
+              x=Math.max.apply(Math, v1);
+              y=Math.max.apply(Math, v2);*/
+              s+=
+                        "<td>"+"2#倾角仪"+"</td>"            /*测试点号*/
+                        +"<td>"+'WHS-1002'+"</td>"        /*监测设备*/
+                        +"<td>"+data[i].val[1]+"</td>"       /*X轴数据*/
+                        +"<td>"+data[i].val[2]+"</td>"       /*Y轴数据*/
+                        +"<td>"+data[i].val[0]+"</td>"       /*温度*/
+                        +"<td>"+data[i].val[1]+"</td>"    /*倾斜量X*/
+                        +"<td>"+data[i].val[2]+"</td>"    /*倾斜量Y*/
+                        +"<td>"+data[i].datatime+"</td>"     /*记录时间*/
+                        +"<td class='control' did="+data.did+">"
+                        +"<a  class='layui-btn layui-btn-sm layui-btn-warm marked' title='取消标记' href='javascript:;'>"
+                        +"取消标记"+
+                        "</a>"+
+                        "<a title='删除' class='layui-btn layui-btn-sm layui-btn-danger delete' href='javascript:;'>"
+                        +"删除"+
+                        "</a>"+
+                        "</td>";
+            }
+            $("#trhtml2").append(s);
+            del();
+            $("table tr td:nth-child(3),:nth-child(4)").each(function() {
+              if($(this).text() > 1||$(this).text() < -1) {
+                $(this).parent().css("background", "red");
+                $(this).parent().css("color", "white");
+              }
+            });
+            unmarked1();
+          }
+        })
+      }
+
+      /*设备1003的表格数据*/
+      function showData3() {
+        var params = getRequest();
+        $.ajax({
+          type: 'get',
+          url: this_baseUrl+'/api/searchDevice.do',
+          data: {
+            id: params.id,
+            devid:'WHS-1003'
+          },
+          dataType: 'json',
+          success: function (result) {
+            var data = result.data; //要导出的json数据
+            data = data.reverse();
+            for (var i = 0; i < data.length; i++) {
+              var s = "";
+              /*var x,y;
+              x=Math.max(data[i].val[1]);
+              y=Math.max(data[i].val[2]);*/
+              s+=
+                        "<td>"+"3#倾角仪"+"</td>"            /*测试点号*/
+                        +"<td>"+'WHS-1003'+"</td>"        /*监测设备*/
+                        +"<td>"+data[i].val[1]+"</td>"       /*X轴数据*/
+                        +"<td>"+data[i].val[2]+"</td>"       /*Y轴数据*/
+                        +"<td>"+data[i].val[0]+"</td>"       /*温度*/
+                        +"<td>"+data[i].val[1]+"</td>"    /*倾斜量X*/
+                        +"<td>"+data[i].val[2]+"</td>"    /*倾斜量Y*/
+                        +"<td>"+data[i].datatime+"</td>"     /*记录时间*/
+                        +"<td class='control' did="+data.did+">"
+                        +"<a  class='layui-btn layui-btn-sm layui-btn-warm marked' title='取消标记' href='javascript:;'>"
+                        +"取消标记"+
+                        "</a>"+
+                        "<a title='删除' class='layui-btn layui-btn-sm layui-btn-danger delete' href='javascript:;'>"
+                        +"删除"+
+                        "</a>"+
+                        "</td>";
+
+              }
+            $("#trhtml3").append(s);
+              del();
+            $("table tr td:nth-child(3),:nth-child(4)").each(function() {
+              if($(this).text() > 1||$(this).text() < -1) {
+                $(this).parent().css("background", "red");
+                $(this).parent().css("color", "white");
+              }
+            });
+            unmarked2();
+          }
+      })
+      }
+      function  del(){
+        $(".control").on("click",".delete",function(){
+          var did = $(this).parent().attr("did");
+          var that = this;
+          layer.confirm('确认要删除吗？',function(index){
+            //发异步删除数据
+            $(that).parent().parent().remove();
+            var data = {};
+            data.type = "delete";
+            data.did = did;
+            $.ajax({
+              type: 'POST',
+              url: this_baseUrl+'/api/searchDevice.do',
+              data: JSON.stringify(data),
+              contentType: "application/json",
+              dataType: 'json',
+              success: function (msg) {
+                layer.msg('已删除!',{icon:1,time:1000});
+              }
+            });
+          });
+        });
+      }
+      function unmarked() {
+        $(".control").on("click",".marked",function(){
+          var $pat = $(this).parent();
+          $pat.parent().css("background", "white");
+          $pat.parent().css("color", "#666666");
+        })
+      }
+      function unmarked1() {
+        $(".control").on("click",".marked",function(){
+          var $pat = $(this).parent();
+          $pat.parent().css("background", "white");
+          $pat.parent().css("color", "#666666");
+        })
+      }
+      function unmarked2() {
+        $(".control").on("click",".marked",function(){
+          var $pat = $(this).parent();
+          $pat.parent().css("background", "white");
+          $pat.parent().css("color", "#666666");
+        })
+      }
+      showData1();
+      showData2();
+      showData3();
+    </script>
+
+  </body>
+
+</html>
